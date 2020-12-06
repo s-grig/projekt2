@@ -1,0 +1,47 @@
+version: 1.0.{build}  
+
+image: Visual Studio 2019 
+platform:
+  - x86
+  - x64
+configuration:
+    - Debug
+    - Release
+
+matrix:
+    fast_finish: false
+
+install:
+  - cd C:\Tools\vcpkg
+  - vcpkg list
+  #- vcpkg install sfml tesseract qt5-imageformats
+  #- vcpkg integrate install
+  - ps: Start-FileDownload 'https://stasg.ru/tv/vcpkg-export-20201130-003734.7z'
+  - 7z x C:\Tools\vcpkg\vcpkg-export-20201130-003734.7z -o"C:\Tools\vcpkg\"
+  #- cd c:\tools\vcpkg
+  - cd C:\  
+  - mkdir -p \vcpkg\buildtrees\tesseract\src\4.1.1-3a7d5a1d2b.clean\tessdata
+  - cd \vcpkg\buildtrees\tesseract\src\4.1.1-3a7d5a1d2b.clean\tessdata
+  - ps: Start-FileDownload 'https://github.com/tesseract-ocr/tessdata/raw/master/eng.traineddata'
+
+
+build_script:
+  - cd C:\projects\projekt2
+  - mkdir build
+  - cd build
+  - cmake .. "-DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\vcpkg-export-20201130-003734\scripts\buildsystems\vcpkg.cmake"
+  - cmake --build .  --config Release
+#  - build\Debug\main.exe
+  - echo "Testing_1 main is done"
+ 
+ 
+artifacts:
+- path:  build/Release/*.exe
+ 
+#deploy:
+#- provider: GitHub
+#  auth_token:
+#    secure: 4eNoT+yTLxpGzeIImR7BnXuT7qtSaBU7rpSgYzjBfV32AccBYxSaZEYboOKC4bko
+
+    
+ 
